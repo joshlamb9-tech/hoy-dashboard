@@ -1295,6 +1295,501 @@
       background: var(--accent-soft);
       box-shadow: 0 0 6px var(--accent-glow);
     }
+
+    /* ═══════════════════════════════════════════════════════════════
+       NOTES FAB + PANEL
+       ═══════════════════════════════════════════════════════════════ */
+    .notes-fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      background: var(--bg2);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 18px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+      z-index: 300;
+      transition: box-shadow 0.2s, background 0.2s;
+      text-shadow: 0 0 8px var(--accent-glow);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    .notes-fab:hover {
+      background: var(--accent-soft);
+      box-shadow: 0 0 18px var(--accent-glow), 0 0 6px var(--accent-glow);
+    }
+
+    .notes-panel {
+      position: fixed;
+      bottom: 68px;
+      right: 20px;
+      width: 360px;
+      max-height: 400px;
+      background: var(--bg2);
+      border: 1px solid var(--accent);
+      border-left: 3px solid var(--accent);
+      box-shadow: -4px -4px 24px var(--accent-glow), 0 0 8px var(--accent-glow);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 299;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.25s ease-out, opacity 0.25s ease-out;
+      overflow: hidden;
+    }
+
+    .notes-panel.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .notes-panel-header {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      background: var(--bg);
+      position: relative;
+    }
+
+    /* HUD corners on notes header */
+    .notes-panel-header::before,
+    .notes-panel-header::after {
+      content: '';
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      pointer-events: none;
+    }
+    .notes-panel-header::before {
+      top: 3px; left: 3px;
+      border-top: 1px solid var(--accent);
+      border-left: 1px solid var(--accent);
+    }
+    .notes-panel-header::after {
+      bottom: 3px; right: 3px;
+      border-bottom: 1px solid var(--accent);
+      border-right: 1px solid var(--accent);
+    }
+
+    .notes-panel-title {
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    .notes-close {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 2px 7px;
+      cursor: pointer;
+      clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px));
+      transition: all 0.15s;
+    }
+
+    .notes-close:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .notes-body {
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+    }
+
+    /* Type selector row */
+    .notes-types {
+      display: flex;
+      gap: 4px;
+    }
+
+    .notes-type-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      cursor: pointer;
+      clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px));
+      transition: all 0.15s;
+    }
+
+    .notes-type-btn:hover {
+      color: var(--text);
+      border-color: var(--muted);
+    }
+
+    .notes-type-btn.active {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      text-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    /* Pupil search within notes panel */
+    .notes-pupil-wrap {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .notes-pupil-wrap.visible { display: flex; }
+
+    .notes-pupil-input {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 4px 10px;
+      outline: none;
+      clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px));
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+
+    .notes-pupil-input::placeholder { color: var(--muted); letter-spacing: 0.08em; }
+
+    .notes-pupil-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    .notes-pupil-dropdown {
+      background: var(--bg2);
+      border: 1px solid var(--accent);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+      display: none;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .notes-pupil-dropdown.open { display: block; }
+
+    .notes-pupil-result {
+      padding: 5px 10px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+
+    .notes-pupil-result:last-child { border-bottom: none; }
+    .notes-pupil-result:hover { background: var(--card-hover); }
+
+    .notes-pupil-result-name {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-strong);
+    }
+
+    .notes-pupil-result-meta {
+      font-size: 8px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    /* Selected pupil tag */
+    .notes-selected-pupil {
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .notes-selected-pupil.visible { display: flex; }
+
+    .notes-selected-tag {
+      font-size: 8px;
+      font-weight: 500;
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 2px 8px;
+      border: 1px solid var(--accent);
+      border-left: 3px solid var(--accent);
+      letter-spacing: 0.04em;
+    }
+
+    .notes-clear-pupil {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      color: var(--muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.12s;
+    }
+
+    .notes-clear-pupil:hover { color: var(--danger); }
+
+    /* Textarea */
+    .notes-textarea {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      line-height: 1.6;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 10px;
+      resize: none;
+      outline: none;
+      width: 100%;
+      rows: 3;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+    }
+
+    .notes-textarea::placeholder { color: var(--muted); }
+
+    .notes-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    /* Send button + confirmation row */
+    .notes-footer {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .notes-logged {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--success);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-shadow: 0 0 6px rgba(52,211,153,0.5);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .notes-logged.show { opacity: 1; }
+
+    .notes-send {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
+      padding: 4px 16px;
+      cursor: pointer;
+      clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px));
+      transition: all 0.15s;
+      text-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    .notes-send:hover {
+      background: var(--accent);
+      color: var(--bg);
+      box-shadow: 0 0 12px var(--accent-glow);
+      text-shadow: none;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       MOBILE — COLLAPSIBLE PANELS
+       ═══════════════════════════════════════════════════════════════ */
+    @media (max-width: 1023px) {
+
+      /* Switch body/html to scrollable */
+      html, body { height: auto; overflow: auto; }
+
+      .dashboard {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+      }
+
+      /* Header: stack + wrap */
+      .header {
+        height: auto;
+        flex-wrap: wrap;
+        padding: 8px 12px;
+        gap: 8px;
+      }
+
+      .header-left { width: 100%; }
+
+      .header-right {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      /* Stats: 2x2 grid */
+      .summary-inline {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 20px;
+        width: 100%;
+      }
+
+      .stat-inline { align-items: flex-start; }
+
+      /* Search: full width */
+      .search-wrap { width: 100%; }
+      .search-input { width: 100%; }
+      .search-dropdown { width: 100%; }
+
+      /* Grid becomes single column stack */
+      .grid {
+        display: flex;
+        flex-direction: column;
+        overflow: visible;
+        height: auto;
+      }
+
+      /* Briefing: full width, flags drop below summary */
+      .briefing {
+        flex-direction: column;
+        max-height: none;
+        border-left: none;
+      }
+
+      .briefing-header {
+        min-width: unset;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+      }
+
+      .briefing-body { padding: 10px 12px; }
+
+      .briefing-flags {
+        min-width: unset;
+        max-width: unset;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 8px 12px;
+      }
+
+      /* Panels: collapsible */
+      .panel {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        overflow: visible;
+        animation: none; /* prevent stagger confusion */
+      }
+
+      /* Panel header becomes a toggle */
+      .panel-header {
+        cursor: pointer;
+        user-select: none;
+      }
+
+      /* Collapsed state: body hidden */
+      .panel.collapsed .panel-body {
+        display: none;
+      }
+
+      /* Collapse indicator arrow */
+      .panel-header::after {
+        /* override HUD corner */
+        content: '▼';
+        position: static;
+        width: auto;
+        height: auto;
+        border: none;
+        font-size: 7px;
+        color: var(--muted);
+        transition: transform 0.2s;
+        margin-left: auto;
+        display: block;
+      }
+
+      .panel.collapsed .panel-header::after {
+        transform: rotate(-90deg);
+      }
+
+      /* Remove HUD bracket "before" corner on mobile — too small to matter */
+      .panel-header::before {
+        display: none;
+      }
+
+      .panel-body {
+        /* allow natural height when open */
+        max-height: 350px;
+        overflow-y: auto;
+      }
+
+      /* Profile panel: full width on mobile */
+      .profile-panel {
+        width: 100%;
+      }
+
+      /* Notes panel: anchored differently on narrow screens */
+      .notes-panel {
+        width: calc(100vw - 40px);
+        right: 20px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      /* Smaller fonts across the board */
+      .header-title { font-size: 9px; }
+
+      .stat-inline .num { font-size: 15px; }
+      .stat-inline .label { font-size: 6px; }
+
+      .panel-title { font-size: 7px; }
+
+      .briefing-text { font-size: 11px; }
+      .briefing-title { font-size: 7px; }
+
+      .timeline-title,
+      .task-title,
+      .email-subject,
+      .trend-title { font-size: 10px; }
+
+      .timeline-meta,
+      .task-meta,
+      .email-snippet,
+      .trend-detail,
+      .email-snippet { font-size: 8px; }
+
+      .search-input { font-size: 9px; }
+    }
   </style>
 </head>
 <body>
@@ -1415,6 +1910,45 @@
     </div>
     <div class="profile-body" id="profileBody">
       <div class="profile-loading">Select a pupil to view their profile.</div>
+    </div>
+  </div>
+
+  <!-- Notes FAB -->
+  <button class="notes-fab" id="notesFab" title="Add note">&#x270E;</button>
+
+  <!-- Notes Panel -->
+  <div class="notes-panel" id="notesPanel">
+    <div class="notes-panel-header">
+      <div class="notes-panel-title">NOTES ///</div>
+      <button class="notes-close" id="notesClose">&#x2715; CLOSE</button>
+    </div>
+    <div class="notes-body">
+      <!-- Type selector -->
+      <div class="notes-types" id="notesTypes">
+        <button class="notes-type-btn active" data-type="QUICK">QUICK</button>
+        <button class="notes-type-btn" data-type="PUPIL">PUPIL</button>
+        <button class="notes-type-btn" data-type="TASK">TASK</button>
+        <button class="notes-type-btn" data-type="PASTORAL">PASTORAL</button>
+      </div>
+
+      <!-- Pupil search (shown when PUPIL or PASTORAL selected) -->
+      <div class="notes-pupil-wrap" id="notesPupilWrap">
+        <input class="notes-pupil-input" id="notesPupilInput" type="text" placeholder="SEARCH PUPIL..." autocomplete="off" spellcheck="false">
+        <div class="notes-pupil-dropdown" id="notesPupilDropdown"></div>
+        <div class="notes-selected-pupil" id="notesSelectedPupil">
+          <span class="notes-selected-tag" id="notesSelectedTag"></span>
+          <button class="notes-clear-pupil" id="notesClearPupil">&#x2715; clear</button>
+        </div>
+      </div>
+
+      <!-- Text input -->
+      <textarea class="notes-textarea" id="notesTextarea" rows="3" placeholder="Type a note..."></textarea>
+
+      <!-- Footer -->
+      <div class="notes-footer">
+        <span class="notes-logged" id="notesLogged">LOGGED</span>
+        <button class="notes-send" id="notesSend">SEND</button>
+      </div>
     </div>
   </div>
 
@@ -1823,6 +2357,171 @@
           }).join('') : `<div class="empty">No events recorded</div>`}
         </div>`;
     }
+
+    /* ═══════════════════════════════════════════════════════════════
+       NOTES PANEL
+       ═══════════════════════════════════════════════════════════════ */
+    (function() {
+      const fab         = document.getElementById('notesFab');
+      const panel       = document.getElementById('notesPanel');
+      const closeBtn    = document.getElementById('notesClose');
+      const typeBtns    = document.querySelectorAll('.notes-type-btn');
+      const pupilWrap   = document.getElementById('notesPupilWrap');
+      const pupilInput  = document.getElementById('notesPupilInput');
+      const pupilDrop   = document.getElementById('notesPupilDropdown');
+      const selPupil    = document.getElementById('notesSelectedPupil');
+      const selTag      = document.getElementById('notesSelectedTag');
+      const clearPupil  = document.getElementById('notesClearPupil');
+      const textarea    = document.getElementById('notesTextarea');
+      const sendBtn     = document.getElementById('notesSend');
+      const loggedEl    = document.getElementById('notesLogged');
+
+      let selectedType     = 'QUICK';
+      let selectedPupilId  = null;
+      let selectedPupilName = null;
+      let pupilSearchTimer = null;
+
+      /* Open / close */
+      fab.addEventListener('click', () => panel.classList.toggle('open'));
+      closeBtn.addEventListener('click', () => panel.classList.remove('open'));
+
+      /* Close when clicking outside */
+      document.addEventListener('click', e => {
+        if (!panel.contains(e.target) && e.target !== fab) {
+          panel.classList.remove('open');
+        }
+      });
+
+      /* Type selector */
+      typeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          typeBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedType = btn.dataset.type;
+          const needsPupil = selectedType === 'PUPIL' || selectedType === 'PASTORAL';
+          pupilWrap.classList.toggle('visible', needsPupil);
+          if (!needsPupil) clearSelectedPupil();
+        });
+      });
+
+      /* Pupil search within notes */
+      pupilInput.addEventListener('input', () => {
+        clearTimeout(pupilSearchTimer);
+        const q = pupilInput.value.trim();
+        if (q.length < 2) { closePupilDrop(); return; }
+        pupilSearchTimer = setTimeout(() => searchPupils(q), 250);
+      });
+
+      async function searchPupils(query) {
+        const { data } = await sb
+          .from('pupils')
+          .select('id, first_name, last_name, form, year_group')
+          .or(`first_name.ilike.%${query}%,last_name.ilike.%${query}%`)
+          .limit(6);
+
+        if (!data || !data.length) {
+          pupilDrop.innerHTML = `<div style="padding:6px 10px;font-size:9px;color:var(--muted)">No pupils found</div>`;
+          pupilDrop.classList.add('open');
+          return;
+        }
+
+        pupilDrop.innerHTML = data.map(p => `
+          <div class="notes-pupil-result" data-id="${p.id}" data-name="${esc(p.first_name)} ${esc(p.last_name)}">
+            <div class="notes-pupil-result-name">${esc(p.first_name)} ${esc(p.last_name)}</div>
+            <div class="notes-pupil-result-meta">${esc(p.form || '')} &middot; Yr ${esc(p.year_group || '')}</div>
+          </div>`).join('');
+
+        pupilDrop.querySelectorAll('.notes-pupil-result').forEach(r => {
+          r.addEventListener('click', () => {
+            selectedPupilId   = r.dataset.id;
+            selectedPupilName = r.dataset.name;
+            selTag.textContent = selectedPupilName;
+            selPupil.classList.add('visible');
+            pupilInput.value = '';
+            closePupilDrop();
+          });
+        });
+
+        pupilDrop.classList.add('open');
+      }
+
+      function closePupilDrop() {
+        pupilDrop.classList.remove('open');
+        pupilDrop.innerHTML = '';
+      }
+
+      function clearSelectedPupil() {
+        selectedPupilId   = null;
+        selectedPupilName = null;
+        selTag.textContent = '';
+        selPupil.classList.remove('visible');
+        pupilInput.value = '';
+        closePupilDrop();
+      }
+
+      clearPupil.addEventListener('click', clearSelectedPupil);
+
+      /* Close pupil dropdown on outside click */
+      document.addEventListener('click', e => {
+        if (!pupilWrap.contains(e.target)) closePupilDrop();
+      });
+
+      /* Submit */
+      sendBtn.addEventListener('click', async () => {
+        const content = textarea.value.trim();
+        if (!content) return;
+
+        sendBtn.textContent = '...';
+        sendBtn.disabled = true;
+
+        const { error } = await sb.from('notes').insert({
+          note_type:   selectedType,
+          content:     content,
+          pupil_id:    selectedPupilId   || null,
+          pupil_name:  selectedPupilName || null
+        });
+
+        sendBtn.textContent = 'SEND';
+        sendBtn.disabled = false;
+
+        if (!error) {
+          textarea.value = '';
+          clearSelectedPupil();
+          /* Flash LOGGED confirmation */
+          loggedEl.classList.add('show');
+          setTimeout(() => loggedEl.classList.remove('show'), 1200);
+        }
+      });
+    })();
+
+    /* ═══════════════════════════════════════════════════════════════
+       MOBILE — COLLAPSIBLE PANELS
+       ═══════════════════════════════════════════════════════════════ */
+    (function() {
+      /* Only wire up below 1024px */
+      const mq = window.matchMedia('(max-width: 1023px)');
+
+      function setupCollapse() {
+        if (!mq.matches) return;
+
+        const panels = document.querySelectorAll('.grid .panel');
+        panels.forEach((panel, idx) => {
+          const header = panel.querySelector('.panel-header');
+          if (header._collapseWired) return; // prevent double-wiring on resize
+          header._collapseWired = true;
+
+          // Default: Schedule (0) and Tasks (1) open; Inbox (2) and Trends (3) collapsed
+          if (idx >= 2) panel.classList.add('collapsed');
+
+          header.addEventListener('click', () => {
+            panel.classList.toggle('collapsed');
+          });
+        });
+      }
+
+      setupCollapse();
+      mq.addEventListener('change', setupCollapse);
+    })();
 
     /* ═══ Pupil tag click delegation ═══
        Any .pupil-tag rendered anywhere on the dashboard can open a profile.
