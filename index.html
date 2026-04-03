@@ -249,6 +249,33 @@
       50% { opacity: 0.2; }
     }
 
+    /* Refresh button */
+    .refresh-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      cursor: pointer;
+      clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px));
+      transition: all 0.2s;
+    }
+
+    .refresh-btn:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+      text-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    .refresh-btn.spinning {
+      color: var(--accent);
+      animation: syncPulse 0.6s ease-in-out infinite;
+    }
+
     /* Theme selector — 5 small squares */
     .theme-switcher {
       display: flex;
@@ -944,6 +971,7 @@
             <div class="label">trends</div>
           </div>
         </div>
+        <button class="refresh-btn" id="refreshBtn" title="Refresh data">REFRESH</button>
         <div class="sync-badge" id="syncBadge">
           <span class="sync-dot"></span>
           <span id="syncText">loading&hellip;</span>
@@ -1214,6 +1242,16 @@
         if (!n) document.getElementById('emailList').innerHTML = empty('No action needed');
       }
     }
+
+    /* ═══ Refresh Button ═══ */
+    document.getElementById('refreshBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('refreshBtn');
+      btn.classList.add('spinning');
+      btn.textContent = 'SYNCING';
+      await loadDashboard();
+      btn.classList.remove('spinning');
+      btn.textContent = 'REFRESH';
+    });
 
     /* ═══ Boot ═══ */
     loadDashboard();
