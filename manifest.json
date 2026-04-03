@@ -1,0 +1,9 @@
+{
+  "name": "HoY Command Centre",
+  "short_name": "HoY",
+  "start_url": "/hoy-dashboard/",
+  "display": "standalone",
+  "background_color": "#030806",
+  "theme_color": "#00ff41",
+  "icons": []
+}

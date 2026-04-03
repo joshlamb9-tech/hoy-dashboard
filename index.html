@@ -7,6 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#030806">
   <style>
     /* ═══════════════════════════════════════════════════════════════
        THEMES — 5 cockpit modes
@@ -943,6 +947,354 @@
     }
 
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ═══════════════════════════════════════════════════════════════
+       PUPIL SEARCH
+       ═══════════════════════════════════════════════════════════════ */
+    .search-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 3px 10px;
+      width: 180px;
+      outline: none;
+      clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px));
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-input::placeholder {
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    .search-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      width: 200px;
+      background: var(--bg2);
+      border: 1px solid var(--accent);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 12px var(--accent-glow);
+      z-index: 1000;
+      display: none;
+    }
+
+    .search-dropdown.open { display: block; }
+
+    .search-result {
+      padding: 6px 10px;
+      cursor: pointer;
+      transition: background 0.12s;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .search-result:last-child { border-bottom: none; }
+
+    .search-result:hover { background: var(--card-hover); }
+
+    .search-result-name {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-strong);
+      letter-spacing: 0.04em;
+    }
+
+    .search-result-meta {
+      font-size: 8px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      margin-top: 1px;
+    }
+
+    .search-no-results {
+      padding: 8px 10px;
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    /* LOCAL SYNC label */
+    .local-sync-note {
+      font-size: 7px;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: default;
+      user-select: none;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       PROFILE PANEL — slide-out
+       ═══════════════════════════════════════════════════════════════ */
+    .profile-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .profile-backdrop.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .profile-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 400px;
+      height: 100vh;
+      background: var(--bg2);
+      border-left: 1px solid var(--accent);
+      box-shadow: -4px 0 24px var(--accent-glow);
+      z-index: 201;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.3s ease-out;
+      overflow: hidden;
+    }
+
+    .profile-panel.open { transform: translateX(0); }
+
+    .profile-panel-header {
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      background: var(--bg);
+      position: relative;
+    }
+
+    /* HUD bracket corners on profile header */
+    .profile-panel-header::before,
+    .profile-panel-header::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      pointer-events: none;
+    }
+
+    .profile-panel-header::before {
+      top: 4px;
+      left: 4px;
+      border-top: 1px solid var(--accent);
+      border-left: 1px solid var(--accent);
+    }
+
+    .profile-panel-header::after {
+      bottom: 4px;
+      right: 4px;
+      border-bottom: 1px solid var(--accent);
+      border-right: 1px solid var(--accent);
+    }
+
+    .profile-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      cursor: pointer;
+      clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px));
+      transition: all 0.15s;
+    }
+
+    .profile-close:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+      text-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    .profile-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--accent-glow);
+      letter-spacing: 0.06em;
+      line-height: 1.2;
+      padding-right: 50px;
+    }
+
+    .profile-sub {
+      font-size: 9px;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      margin-top: 4px;
+    }
+
+    .profile-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: transparent transparent;
+    }
+
+    .profile-body:hover {
+      scrollbar-color: var(--accent) transparent;
+    }
+
+    .profile-body::-webkit-scrollbar { width: 2px; }
+    .profile-body::-webkit-scrollbar-track { background: transparent; }
+    .profile-body::-webkit-scrollbar-thumb { background: transparent; border-radius: 0; }
+    .profile-body:hover::-webkit-scrollbar-thumb { background: var(--accent); }
+
+    .profile-section {
+      margin-bottom: 14px;
+    }
+
+    /* Bracketed section headers like the main panel headers */
+    .profile-section-title {
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-shadow: 0 0 6px var(--accent-glow);
+      margin-bottom: 8px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .profile-section-title::before { content: '[ '; }
+    .profile-section-title::after  { content: ' ]'; }
+
+    .profile-stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .profile-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      min-width: 54px;
+    }
+
+    .profile-stat .num {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent);
+      text-shadow: 0 0 8px var(--accent-glow);
+      line-height: 1;
+    }
+
+    .profile-stat .num.warn {
+      color: var(--danger);
+      text-shadow: 0 0 8px var(--p1-glow);
+    }
+
+    .profile-stat .label {
+      font-size: 7px;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-align: center;
+    }
+
+    /* Event log */
+    .profile-event {
+      background: var(--card);
+      border: 1px solid var(--border);
+      clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px));
+      padding: 7px 9px;
+      margin-bottom: 5px;
+    }
+
+    .profile-event-header {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 3px;
+    }
+
+    .profile-event-date {
+      font-size: 9px;
+      font-weight: 400;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+
+    .profile-event-badge {
+      font-size: 7px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 1px 5px;
+      border: 1px solid currentColor;
+      flex-shrink: 0;
+    }
+
+    .profile-event-badge.debit   { color: var(--danger); }
+    .profile-event-badge.reward  { color: var(--success); }
+    .profile-event-badge.pastoral { color: var(--warning); }
+    .profile-event-badge.medical { color: #22d3ee; }
+    .profile-event-badge.other   { color: var(--muted); }
+
+    .profile-event-title {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-strong);
+      line-height: 1.3;
+    }
+
+    .profile-event-detail {
+      font-size: 9px;
+      color: var(--muted);
+      margin-top: 2px;
+      line-height: 1.5;
+    }
+
+    .profile-loading {
+      padding: 30px 12px;
+      color: var(--muted);
+      font-size: 9px;
+      text-align: center;
+      letter-spacing: 0.06em;
+    }
+
+    /* clickable pupil tags */
+    .pupil-tag {
+      cursor: pointer;
+      transition: background 0.12s, box-shadow 0.12s;
+    }
+
+    .pupil-tag:hover {
+      background: var(--accent-soft);
+      box-shadow: 0 0 6px var(--accent-glow);
+    }
   </style>
 </head>
 <body>
@@ -971,6 +1323,11 @@
             <div class="label">trends</div>
           </div>
         </div>
+        <div class="search-wrap">
+          <input class="search-input" id="searchInput" type="text" placeholder="SEARCH PUPIL..." autocomplete="off" spellcheck="false">
+          <div class="search-dropdown" id="searchDropdown"></div>
+        </div>
+        <span class="local-sync-note" title="Todoist tasks sync when you run Claude Code locally">LOCAL SYNC ONLY</span>
         <button class="refresh-btn" id="refreshBtn" title="Refresh data">REFRESH</button>
         <div class="sync-badge" id="syncBadge">
           <span class="sync-dot"></span>
@@ -1045,6 +1402,19 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Pupil profile slide-out -->
+  <div class="profile-backdrop" id="profileBackdrop"></div>
+  <div class="profile-panel" id="profilePanel">
+    <div class="profile-panel-header">
+      <button class="profile-close" id="profileClose">&#x2715; CLOSE</button>
+      <div class="profile-name" id="profileName">&mdash;</div>
+      <div class="profile-sub" id="profileSub"></div>
+    </div>
+    <div class="profile-body" id="profileBody">
+      <div class="profile-loading">Select a pupil to view their profile.</div>
     </div>
   </div>
 
@@ -1256,6 +1626,225 @@
     /* ═══ Boot ═══ */
     loadDashboard();
     setInterval(loadDashboard, 30000);
+
+    /* ═══════════════════════════════════════════════════════════════
+       PUPIL SEARCH
+       ═══════════════════════════════════════════════════════════════ */
+    const searchInput    = document.getElementById('searchInput');
+    const searchDropdown = document.getElementById('searchDropdown');
+
+    let searchTimer = null;
+
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      const q = searchInput.value.trim();
+      if (q.length < 2) { closeDropdown(); return; }
+      searchTimer = setTimeout(() => runSearch(q), 250);
+    });
+
+    searchInput.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closeDropdown(); searchInput.blur(); }
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.search-wrap')) closeDropdown();
+    });
+
+    function closeDropdown() {
+      searchDropdown.classList.remove('open');
+      searchDropdown.innerHTML = '';
+    }
+
+    async function runSearch(query) {
+      const { data, error } = await sb
+        .from('pupils')
+        .select('id, first_name, last_name, form, year_group, tutor')
+        .or(`first_name.ilike.%${query}%,last_name.ilike.%${query}%`)
+        .limit(8);
+
+      if (error || !data) { closeDropdown(); return; }
+
+      if (!data.length) {
+        searchDropdown.innerHTML = `<div class="search-no-results">No pupils found</div>`;
+        searchDropdown.classList.add('open');
+        return;
+      }
+
+      searchDropdown.innerHTML = data.map(p => `
+        <div class="search-result" data-pupil-id="${p.id}">
+          <div class="search-result-name">${esc(p.first_name)} ${esc(p.last_name)}</div>
+          <div class="search-result-meta">${esc(p.form || '')} &middot; Yr ${esc(p.year_group || '')}</div>
+        </div>`).join('');
+
+      searchDropdown.querySelectorAll('.search-result').forEach(r => {
+        r.addEventListener('click', () => {
+          closeDropdown();
+          searchInput.value = '';
+          openProfile(r.dataset.pupilId);
+        });
+      });
+
+      searchDropdown.classList.add('open');
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       PUPIL PROFILE PANEL
+       ═══════════════════════════════════════════════════════════════ */
+    const profileBackdrop = document.getElementById('profileBackdrop');
+    const profilePanel    = document.getElementById('profilePanel');
+    const profileClose    = document.getElementById('profileClose');
+    const profileName     = document.getElementById('profileName');
+    const profileSub      = document.getElementById('profileSub');
+    const profileBody     = document.getElementById('profileBody');
+
+    function openProfilePanel() {
+      profileBackdrop.classList.add('open');
+      profilePanel.classList.add('open');
+      document.body.style.overflow = 'hidden'; // prevent background scroll
+    }
+
+    function closeProfile() {
+      profileBackdrop.classList.remove('open');
+      profilePanel.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    profileClose.addEventListener('click', closeProfile);
+    profileBackdrop.addEventListener('click', closeProfile);
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeProfile();
+    });
+
+    async function openProfile(pupilId) {
+      profileName.textContent = '...';
+      profileSub.textContent  = '';
+      profileBody.innerHTML   = `<div class="profile-loading"><div class="spinner"></div>Loading&hellip;</div>`;
+      openProfilePanel();
+
+      // Fetch summary and events in parallel
+      const [summaryR, eventsR] = await Promise.all([
+        sb.from('pupil_summary').select('*').eq('id', pupilId).single(),
+        sb.from('pupil_events').select('*').eq('pupil_id', pupilId).order('occurred_at', { ascending: false })
+      ]);
+
+      const s = summaryR.data;
+      const events = eventsR.data || [];
+
+      if (!s) {
+        profileName.textContent = 'Not found';
+        profileSub.textContent  = '';
+        profileBody.innerHTML   = `<div class="profile-loading">No profile data available.</div>`;
+        return;
+      }
+
+      profileName.textContent = `${s.first_name || ''} ${s.last_name || ''}`.trim();
+      profileSub.textContent  = [s.form, s.tutor ? `Tutor: ${s.tutor}` : ''].filter(Boolean).join(' \u00b7 ');
+
+      const minorWarn = (s.minor_debits || 0) >= 3;
+
+      profileBody.innerHTML = `
+        <div class="profile-section">
+          <div class="profile-section-title">CONDUCT</div>
+          <div class="profile-stats">
+            <div class="profile-stat">
+              <div class="num${minorWarn ? ' warn' : ''}">${s.minor_debits || 0}</div>
+              <div class="label">Minor Debits</div>
+            </div>
+            <div class="profile-stat">
+              <div class="num">${s.major_debits || 0}</div>
+              <div class="label">Major Debits</div>
+            </div>
+            <div class="profile-stat">
+              <div class="num">${s.detentions || 0}</div>
+              <div class="label">Detentions</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title">REWARDS</div>
+          <div class="profile-stats">
+            <div class="profile-stat">
+              <div class="num">${s.merits || 0}</div>
+              <div class="label">Merits</div>
+            </div>
+            <div class="profile-stat">
+              <div class="num">${s.house_points || 0}</div>
+              <div class="label">House Pts</div>
+            </div>
+            <div class="profile-stat">
+              <div class="num">${s.maks || 0}</div>
+              <div class="label">MAKs</div>
+            </div>
+            <div class="profile-stat">
+              <div class="num">${s.heads_commendations || 0}</div>
+              <div class="label">Head's Com.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title">PASTORAL</div>
+          <div class="profile-stats">
+            <div class="profile-stat">
+              <div class="num">${s.pastoral_concerns || 0}</div>
+              <div class="label">Concerns</div>
+            </div>
+            <div class="profile-stat">
+              <div class="num">${s.parent_emails || 0}</div>
+              <div class="label">Parent Emails</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-section-title">EVENT LOG</div>
+          ${events.length ? events.map(ev => {
+            const dateStr = ev.occurred_at
+              ? new Date(ev.occurred_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' })
+              : '';
+            const typeRaw = (ev.event_type || 'other').toLowerCase();
+            // Map event types to badge classes
+            const badgeClass = typeRaw.includes('debit') ? 'debit'
+              : typeRaw.includes('reward') || typeRaw.includes('merit') || typeRaw.includes('house') ? 'reward'
+              : typeRaw.includes('pastoral') ? 'pastoral'
+              : typeRaw.includes('medical') ? 'medical'
+              : 'other';
+            return `<div class="profile-event">
+              <div class="profile-event-header">
+                <div class="profile-event-date">${esc(dateStr)}</div>
+                <span class="profile-event-badge ${badgeClass}">${esc(ev.event_type || 'other')}</span>
+              </div>
+              <div class="profile-event-title">${esc(ev.title || '')}</div>
+              ${ev.detail ? `<div class="profile-event-detail">${esc(ev.detail)}</div>` : ''}
+            </div>`;
+          }).join('') : `<div class="empty">No events recorded</div>`}
+        </div>`;
+    }
+
+    /* ═══ Pupil tag click delegation ═══
+       Any .pupil-tag rendered anywhere on the dashboard can open a profile.
+       Tags store the pupil name; we resolve to an id via a quick search.    */
+    document.addEventListener('click', async e => {
+      const tag = e.target.closest('.pupil-tag');
+      if (!tag) return;
+      const name = tag.textContent.trim();
+      if (!name) return;
+      const parts = name.split(' ');
+      const first = parts[0];
+      const last  = parts.slice(1).join(' ');
+      // Try exact match first, fall back to partial
+      let query = sb.from('pupils').select('id').limit(1);
+      if (last) {
+        query = query.ilike('last_name', `${last}%`).ilike('first_name', `${first}%`);
+      } else {
+        query = query.or(`first_name.ilike.${first}%,last_name.ilike.${first}%`);
+      }
+      const { data } = await query;
+      if (data && data.length) openProfile(data[0].id);
+    });
   </script>
 </body>
 </html>
