@@ -1822,7 +1822,7 @@
           <input class="search-input" id="searchInput" type="text" placeholder="SEARCH PUPIL..." autocomplete="off" spellcheck="false">
           <div class="search-dropdown" id="searchDropdown"></div>
         </div>
-        <span class="local-sync-note" title="Todoist tasks sync when you run Claude Code locally">LOCAL SYNC ONLY</span>
+        <span class="local-sync-note" title="Press REFRESH to pull live data from Todoist, Calendar and Gmail">LIVE SYNC</span>
         <button class="refresh-btn" id="refreshBtn" title="Refresh data">REFRESH</button>
         <div class="sync-badge" id="syncBadge">
           <span class="sync-dot"></span>
@@ -2151,10 +2151,36 @@
     document.getElementById('refreshBtn').addEventListener('click', async () => {
       const btn = document.getElementById('refreshBtn');
       btn.classList.add('spinning');
-      btn.textContent = 'SYNCING';
-      await loadDashboard();
-      btn.classList.remove('spinning');
-      btn.textContent = 'REFRESH';
+      btn.textContent = 'SYNCING…';
+      btn.disabled = true;
+
+      try {
+        // Call the edge function to pull fresh data from Todoist, Calendar, Gmail
+        const syncRes = await fetch(
+          'https://dlcseuejvducbsjhqvze.supabase.co/functions/v1/dashboard-sync',
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${SUPABASE_ANON}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        if (!syncRes.ok) throw new Error(`Sync returned ${syncRes.status}`);
+        // Re-read Supabase tables now that they've been updated
+        await loadDashboard();
+        btn.textContent = 'REFRESH';
+      } catch (e) {
+        console.error('Sync failed:', e);
+        btn.textContent = 'SYNC FAILED';
+        // Still try to refresh display from whatever is in Supabase
+        await loadDashboard();
+        // Reset label after 4 seconds
+        setTimeout(() => { btn.textContent = 'REFRESH'; }, 4000);
+      } finally {
+        btn.classList.remove('spinning');
+        btn.disabled = false;
+      }
     });
 
     /* ═══ Boot ═══ */
