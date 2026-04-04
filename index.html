@@ -1790,6 +1790,311 @@
 
       .search-input { font-size: 9px; }
     }
+
+    /* ═══════════════════════════════════════════════════════════════
+       LEADERSHIP COACH WIDGET
+       ═══════════════════════════════════════════════════════════════ */
+    .coach-strip {
+      grid-column: 1 / -1;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      display: flex;
+      align-items: stretch;
+      max-height: 26vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Subtle accent left border — different colour cue from briefing */
+    .coach-strip::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      opacity: 0.4;
+    }
+
+    .coach-header {
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 110px;
+      border-right: 1px solid var(--border);
+      flex-shrink: 0;
+      border-left: 4px solid var(--muted);
+    }
+
+    .coach-title {
+      font-size: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .coach-category-badge {
+      display: inline-block;
+      font-size: 7px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 2px 7px;
+      border: 1px solid currentColor;
+      clip-path: polygon(0 0, calc(100% - 3px) 0, 100% 3px, 100% 100%, 3px 100%, 0 calc(100% - 3px));
+    }
+
+    /* Category colours */
+    .coach-category-badge.morning    { color: #f59e0b; }
+    .coach-category-badge.corridor   { color: #38bdf8; }
+    .coach-category-badge.classroom  { color: #a78bfa; }
+    .coach-category-badge.social     { color: #34d399; }
+    .coach-category-badge.trust      { color: var(--accent); }
+    .coach-category-badge.end_of_day { color: #f04444; }
+
+    .coach-body {
+      flex: 1;
+      padding: 10px 18px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+      scrollbar-width: thin;
+      scrollbar-color: transparent transparent;
+    }
+
+    .coach-body:hover { scrollbar-color: var(--border) transparent; }
+    .coach-body::-webkit-scrollbar { width: 2px; }
+    .coach-body::-webkit-scrollbar-thumb { background: transparent; }
+    .coach-body:hover::-webkit-scrollbar-thumb { background: var(--border); }
+
+    .coach-prompt {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-strong);
+      line-height: 1.4;
+    }
+
+    .coach-detail {
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--muted);
+      line-height: 1.6;
+      display: none; /* toggled by JS */
+    }
+
+    .coach-detail.open { display: block; }
+
+    .coach-detail-toggle {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: color 0.15s;
+      text-align: left;
+    }
+
+    .coach-detail-toggle:hover { color: var(--text); }
+
+    /* Post-response messages */
+    .coach-feedback-msg {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.5;
+      display: none;
+    }
+
+    .coach-feedback-msg.show { display: block; }
+
+    .coach-streak {
+      font-size: 9px;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      display: none;
+    }
+
+    .coach-streak.show { display: block; }
+
+    .coach-streak strong {
+      color: var(--accent);
+      text-shadow: 0 0 6px var(--accent-glow);
+    }
+
+    /* Reflection input for "tried it" */
+    .coach-reflection-wrap {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .coach-reflection-wrap.open { display: flex; }
+
+    .coach-reflection-input {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 5px 9px;
+      resize: none;
+      outline: none;
+      width: 100%;
+      line-height: 1.5;
+      clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px));
+      transition: border-color 0.2s;
+    }
+
+    .coach-reflection-input:focus {
+      border-color: var(--accent);
+    }
+
+    .coach-stars {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .coach-star {
+      font-size: 14px;
+      cursor: pointer;
+      color: var(--border);
+      transition: color 0.12s;
+      user-select: none;
+      line-height: 1;
+    }
+
+    .coach-star.active { color: var(--accent); text-shadow: 0 0 6px var(--accent-glow); }
+    .coach-star:hover  { color: var(--text); }
+
+    .coach-reflection-submit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
+      padding: 3px 14px;
+      cursor: pointer;
+      clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px));
+      transition: all 0.15s;
+      text-shadow: 0 0 6px var(--accent-glow);
+      align-self: flex-start;
+    }
+
+    .coach-reflection-submit:hover {
+      background: var(--accent);
+      color: var(--bg);
+      box-shadow: 0 0 10px var(--accent-glow);
+      text-shadow: none;
+    }
+
+    /* Action buttons */
+    .coach-actions {
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      justify-content: center;
+      min-width: 160px;
+      max-width: 200px;
+      border-left: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .coach-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 5px 10px;
+      cursor: pointer;
+      clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px));
+      transition: all 0.15s;
+      text-align: left;
+      width: 100%;
+    }
+
+    .coach-btn.done {
+      color: var(--success);
+      border-color: var(--success);
+    }
+
+    .coach-btn.done:hover {
+      background: rgba(52,211,153,0.08);
+      box-shadow: 0 0 8px rgba(52,211,153,0.2);
+    }
+
+    .coach-btn.skip:hover {
+      color: var(--text);
+      border-color: var(--muted);
+    }
+
+    .coach-btn.tried {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .coach-btn.tried:hover {
+      background: var(--accent-soft);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    /* Briefing stale note */
+    .briefing-stale {
+      font-size: 9px;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+      padding: 4px 0 0 0;
+      font-style: italic;
+      opacity: 0.75;
+    }
+
+    @media (max-width: 1023px) {
+      .coach-strip {
+        flex-direction: column;
+        max-height: none;
+      }
+      .coach-header {
+        min-width: unset;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+      }
+      .coach-actions {
+        min-width: unset;
+        max-width: unset;
+        border-left: none;
+        border-top: 1px solid var(--border);
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 8px 12px;
+      }
+      .coach-btn { width: auto; }
+    }
   </style>
 </head>
 <body>
@@ -1851,6 +2156,22 @@
           <div class="briefing-empty">No briefing yet</div>
         </div>
         <div class="briefing-flags" id="briefingFlags"></div>
+      </div>
+
+      <!-- Leadership Coach -->
+      <div class="coach-strip" id="coachStrip">
+        <div class="coach-header">
+          <div class="coach-title">Leadership<br>Coach ///</div>
+          <span class="coach-category-badge" id="coachBadge"></span>
+        </div>
+        <div class="coach-body" id="coachBody">
+          <div class="loading"><div class="spinner"></div>Loading&hellip;</div>
+        </div>
+        <div class="coach-actions" id="coachActions">
+          <button class="coach-btn done"  id="coachDone">Done &#10003;</button>
+          <button class="coach-btn skip"  id="coachSkip">Skipped</button>
+          <button class="coach-btn tried" id="coachTried">Tried it&hellip;</button>
+        </div>
       </div>
 
       <!-- Schedule -->
@@ -1998,7 +2319,14 @@
         return;
       }
       dateEl.textContent = briefing.briefing_date;
-      bodyEl.innerHTML = `<div class="briefing-text">${esc(briefing.summary)}</div>`;
+
+      // Check if briefing is stale (older than 24 hours)
+      const briefingAge = Date.now() - new Date(briefing.briefing_date).getTime();
+      const staleNote   = briefingAge > 86400000
+        ? `<div class="briefing-stale">Briefing pending — hit refresh to sync latest data.</div>`
+        : '';
+
+      bodyEl.innerHTML = `<div class="briefing-text">${esc(briefing.summary)}</div>${staleNote}`;
       if (briefing.trend_flags?.length) {
         flagsEl.innerHTML = briefing.trend_flags.map(f => `<div class="briefing-flag">${esc(f)}</div>`).join('');
       } else {
@@ -2547,6 +2875,235 @@
 
       setupCollapse();
       mq.addEventListener('change', setupCollapse);
+    })();
+
+    /* ═══════════════════════════════════════════════════════════════
+       LEADERSHIP COACH WIDGET
+       ═══════════════════════════════════════════════════════════════ */
+    (function() {
+      let currentPromptId = null;
+      let responded       = false;
+      let starRating      = 0;
+
+      const CATEGORY_TIME_MAP = [
+        // [startHour, endHour, category]
+        [0,  10, 'morning'],
+        [10, 12, 'corridor'],
+        [12, 13, 'social'],
+        [12, 14, 'classroom'],
+        [14, 24, 'trust'],
+        [16, 24, 'end_of_day'],
+      ];
+
+      /* Pick category based on time of day.
+         If multiple match, return the most specific (latest start). */
+      function preferredCategory() {
+        const h = new Date().getHours();
+        let best = null;
+        for (const [s, e, cat] of CATEGORY_TIME_MAP) {
+          if (h >= s && h < e) best = cat;
+        }
+        return best; // null means use fallback
+      }
+
+      async function loadCoach() {
+        const bodyEl    = document.getElementById('coachBody');
+        const badgeEl   = document.getElementById('coachBadge');
+        const actionsEl = document.getElementById('coachActions');
+
+        // Check if already responded today (stored in localStorage)
+        const todayKey = 'coach-responded-' + new Date().toISOString().split('T')[0];
+        if (localStorage.getItem(todayKey)) {
+          // Render a minimal body so renderResponded has elements to work with
+          bodyEl.innerHTML = `
+            <div class="coach-feedback-msg" id="coachFeedbackMsg"></div>
+            <div class="coach-streak" id="coachStreakEl"></div>`;
+          renderResponded(bodyEl, badgeEl, actionsEl, true /* returning */);
+          return;
+        }
+
+        const cat = preferredCategory();
+
+        // Build query: prefer time-appropriate category, prioritise least-shown + best rated
+        let query = sb.from('leadership_prompts').select('*');
+        if (cat) query = query.eq('category', cat);
+        query = query.order('times_shown', { ascending: true })
+                     .order('avg_rating',   { ascending: false })
+                     .limit(1);
+
+        let { data, error } = await query;
+
+        // Fallback: if no category match found, try any prompt
+        if ((!data || !data.length) && cat) {
+          const fallback = await sb.from('leadership_prompts')
+            .select('*')
+            .order('times_shown', { ascending: true })
+            .order('avg_rating',   { ascending: false })
+            .limit(1);
+          data  = fallback.data;
+          error = fallback.error;
+        }
+
+        if (error || !data || !data.length) {
+          bodyEl.innerHTML = '<div class="briefing-empty">No prompts loaded yet</div>';
+          return;
+        }
+
+        const p = data[0];
+        currentPromptId = p.id;
+
+        // Badge
+        badgeEl.textContent  = p.category.replace('_', ' ');
+        badgeEl.className    = `coach-category-badge ${p.category}`;
+
+        // Body
+        bodyEl.innerHTML = `
+          <div class="coach-prompt">${esc(p.prompt)}</div>
+          <button class="coach-detail-toggle" id="coachDetailToggle">+ show detail</button>
+          <div class="coach-detail" id="coachDetail">${esc(p.detail || '')}</div>
+          <div class="coach-reflection-wrap" id="coachReflectionWrap">
+            <textarea class="coach-reflection-input" id="coachReflectionInput" rows="2" placeholder="What happened? What did you notice?"></textarea>
+            <div class="coach-stars" id="coachStars">
+              ${[1,2,3,4,5].map(n => `<span class="coach-star" data-rating="${n}">&#9733;</span>`).join('')}
+              <span style="font-size:8px;color:var(--muted);margin-left:4px;letter-spacing:0.06em">RATE IT</span>
+            </div>
+            <button class="coach-reflection-submit" id="coachReflectionSubmit">Submit</button>
+          </div>
+          <div class="coach-feedback-msg" id="coachFeedbackMsg"></div>
+          <div class="coach-streak" id="coachStreakEl"></div>`;
+
+        // Detail toggle
+        document.getElementById('coachDetailToggle').addEventListener('click', function() {
+          const d = document.getElementById('coachDetail');
+          d.classList.toggle('open');
+          this.textContent = d.classList.contains('open') ? '- hide detail' : '+ show detail';
+        });
+
+        // Star rating
+        document.getElementById('coachStars').addEventListener('click', e => {
+          const star = e.target.closest('.coach-star');
+          if (!star) return;
+          starRating = parseInt(star.dataset.rating, 10);
+          document.querySelectorAll('.coach-star').forEach(s => {
+            s.classList.toggle('active', parseInt(s.dataset.rating, 10) <= starRating);
+          });
+        });
+
+        // Reflection submit
+        document.getElementById('coachReflectionSubmit').addEventListener('click', () => {
+          const reflection = document.getElementById('coachReflectionInput').value.trim();
+          submitResponse('tried_it', reflection, starRating);
+        });
+
+        wireButtons();
+      }
+
+      function wireButtons() {
+        document.getElementById('coachDone').addEventListener('click',  () => submitResponse('did_it'));
+        document.getElementById('coachSkip').addEventListener('click',  () => submitResponse('skipped'));
+        document.getElementById('coachTried').addEventListener('click', () => {
+          // Open the reflection panel inline
+          const wrap = document.getElementById('coachReflectionWrap');
+          if (wrap) wrap.classList.toggle('open');
+        });
+      }
+
+      async function submitResponse(type, reflection, rating) {
+        if (responded) return;
+        responded = true;
+
+        // Hide action buttons
+        const actionsEl = document.getElementById('coachActions');
+        if (actionsEl) actionsEl.style.display = 'none';
+
+        // Insert feedback row
+        const fbPayload = {
+          prompt_id:  currentPromptId,
+          response:   type,
+          reflection: reflection || null,
+          rating:     rating     || null,
+        };
+        await sb.from('leadership_feedback').insert(fbPayload);
+
+        // Increment times_shown and update avg_rating on the prompt
+        const { data: existing } = await sb
+          .from('leadership_prompts')
+          .select('times_shown, avg_rating')
+          .eq('id', currentPromptId)
+          .single();
+
+        if (existing) {
+          const newShown = (existing.times_shown || 0) + 1;
+          let newAvg     = existing.avg_rating || 0;
+          if (rating) {
+            // Running average: new_avg = (old_avg * (n-1) + rating) / n
+            newAvg = ((newAvg * (newShown - 1)) + rating) / newShown;
+          }
+          await sb.from('leadership_prompts').update({
+            times_shown: newShown,
+            avg_rating:  Math.round(newAvg * 100) / 100,
+          }).eq('id', currentPromptId);
+        }
+
+        // Mark today as responded in localStorage
+        const todayKey = 'coach-responded-' + new Date().toISOString().split('T')[0];
+        localStorage.setItem(todayKey, type);
+
+        renderResponded(
+          document.getElementById('coachBody'),
+          document.getElementById('coachBadge'),
+          actionsEl,
+          false,
+          type
+        );
+      }
+
+      async function renderResponded(bodyEl, badgeEl, actionsEl, returning, type) {
+        if (actionsEl) actionsEl.style.display = 'none';
+
+        // Work out streak: count distinct days with did_it or tried_it
+        const { data: recent } = await sb
+          .from('leadership_feedback')
+          .select('created_at, response')
+          .in('response', ['did_it', 'tried_it'])
+          .order('created_at', { ascending: false })
+          .limit(60);
+
+        let streak = 0;
+        if (recent && recent.length) {
+          // Count consecutive calendar days from today backward
+          const days = new Set(recent.map(r => r.created_at.split('T')[0]));
+          const today = new Date();
+          for (let i = 0; i < 60; i++) {
+            const d = new Date(today);
+            d.setDate(d.getDate() - i);
+            const key = d.toISOString().split('T')[0];
+            if (days.has(key)) streak++;
+            else if (i > 0) break; // streak broken
+          }
+        }
+
+        const msgEl    = document.getElementById('coachFeedbackMsg');
+        const streakEl = document.getElementById('coachStreakEl');
+        const reflWrap = document.getElementById('coachReflectionWrap');
+
+        if (reflWrap) reflWrap.classList.remove('open');
+
+        if (returning) {
+          if (msgEl)    { msgEl.textContent = 'Already responded today. Come back tomorrow.'; msgEl.classList.add('show'); }
+        } else if (type === 'skipped') {
+          if (msgEl)    { msgEl.textContent = 'No worries — tomorrow\'s a new day.'; msgEl.classList.add('show'); }
+        } else {
+          if (msgEl)    { msgEl.textContent = 'Nice one.'; msgEl.classList.add('show'); }
+        }
+
+        if (streakEl && streak > 0) {
+          streakEl.innerHTML = `Current streak: <strong>${streak} day${streak === 1 ? '' : 's'}</strong>`;
+          streakEl.classList.add('show');
+        }
+      }
+
+      loadCoach();
     })();
 
     /* ═══ Pupil tag click delegation ═══
